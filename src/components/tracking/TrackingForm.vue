@@ -3,7 +3,6 @@ import { ref } from 'vue';
 import Input from '@/components/ui/input.vue';
 import Button from '@/components/ui/button.vue';
 
-// Nhận props từ App.vue thay vì tự gọi useTracking
 interface Props {
   isLoading: boolean;
   trackPackage: Function;
@@ -15,21 +14,19 @@ const trackingCode = ref('');
 const cellphone = ref('');
 const selectedCarrier = ref<string>('AUTO');
 
-// Danh sách carriers
 const carriers = [
-  { value: 'AUTO', label: '🤖 Tự động nhận diện', color: 'text-blue-400' },
-  { value: 'GHN', label: '🚚 GHN - Giao Hàng Nhanh', color: 'text-orange-400' },
-  { value: 'SPX', label: '📦 SPX - Shopee Express', color: 'text-red-400' },
-  { value: 'LEX', label: '✈️ LEX - LEX Vietnam', color: 'text-green-400' },
-  { value: 'JT_EXPRESS', label: '🎯 J&T Express', color: 'text-yellow-400' },
-  { value: 'GHTK', label: '💼 GHTK - Giao Hàng Tiết Kiệm', color: 'text-purple-400' },
-  { value: 'BEST_EXPRESS', label: '⚡ Best Express', color: 'text-pink-400' },
+  { value: 'AUTO', label: 'Auto-detect carrier', icon: '🤖' },
+  { value: 'GHN', label: 'GHN - Giao Hang Nhanh', icon: '🚚' },
+  { value: 'SPX', label: 'SPX - Shopee Express', icon: '📦' },
+  { value: 'LEX', label: 'LEX - LEX Vietnam', icon: '✈️' },
+  { value: 'JT_EXPRESS', label: 'J&T Express', icon: '🎯' },
+  { value: 'GHTK', label: 'GHTK - Giao Hang Tiet Kiem', icon: '💼' },
+  { value: 'BEST_EXPRESS', label: 'Best Express', icon: '⚡' },
 ];
 
 const handleTrack = async () => {
   if (!trackingCode.value.trim()) return;
 
-  // Gọi function được pass từ App.vue với carrier selection
   await props.trackPackage(
     trackingCode.value.toUpperCase(),
     cellphone.value.trim() || undefined,
@@ -47,104 +44,185 @@ const handleKeyPress = (e: any) => {
   }
 };
 
-// Show phone input if J&T is selected
 const needsPhone = () => selectedCarrier.value === 'JT_EXPRESS';
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-8 max-w-3xl mx-auto px-4">
-    <!-- Hero Text -->
-    <div class="text-center space-y-2">
-      <h2 class="text-5xl md:text-7xl lg:text-8xl font-black uppercase text-off-white">
-        TRACK YOUR
-      </h2>
-      <h2 class="text-5xl md:text-7xl lg:text-8xl font-black uppercase text-accent-red">ORDER</h2>
-    </div>
-
-    <!-- Input Form -->
-    <div class="w-full flex flex-col gap-4">
-      <!-- Carrier Selection -->
-      <div class="flex flex-col gap-2">
-        <label class="text-sm font-semibold text-off-white/80 uppercase tracking-wide">
-          Đơn vị vận chuyển
-        </label>
-        <select
-          v-model="selectedCarrier"
-          class="bg-off-white/10 text-off-white border border-off-white/20 rounded-lg px-4 py-3 text-base font-medium focus:ring-2 focus:ring-accent-red focus:border-transparent transition-all backdrop-blur-sm"
-          :disabled="isLoading"
-        >
-          <option
-            v-for="carrier in carriers"
-            :key="carrier.value"
-            :value="carrier.value"
-            class="bg-dark-bg text-off-white"
-          >
-            {{ carrier.label }}
-          </option>
-        </select>
-        <p class="text-xs text-off-white/50">
-          Chọn "Tự động nhận diện" để hệ thống tự động phát hiện đơn vị vận chuyển
+  <div class="hero-section">
+    <div class="max-w-4xl mx-auto">
+      <!-- Hero Text -->
+      <div class="text-center mb-12">
+        <div class="inline-block mb-4 px-4 py-2 rounded-full text-sm font-semibold" style="background-color: var(--color-accent); color: white; box-shadow: var(--shadow-md)">
+          Vietnam Shipping Tracker
+        </div>
+        <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-4" style="color: var(--color-text-primary); line-height: 1.1">
+          Track Your Package
+          <span class="block mt-2" style="color: var(--color-accent)">In Real-Time</span>
+        </h1>
+        <p class="text-lg md:text-xl max-w-2xl mx-auto" style="color: var(--color-text-secondary)">
+          Enter your tracking code below to get instant updates on your shipment
         </p>
       </div>
 
-      <!-- Tracking Code Input -->
-      <div class="flex flex-col md:flex-row gap-4">
-        <Input
-          v-model="trackingCode"
-          placeholder="NHẬP MÃ VẬN ĐƠN"
-          class="flex-1 bg-off-white text-dark-bg text-center uppercase text-xl md:text-2xl font-bold py-6 md:py-8 focus:ring-accent-red focus:ring-2 transition-shadow"
-          :disabled="isLoading"
-          @input="handleInput"
-          @keypress="handleKeyPress"
-        />
-        <Button
-          :disabled="!trackingCode.trim() || isLoading"
-          class="bg-accent-red hover:bg-accent-red-dark disabled:bg-gray-500 disabled:cursor-not-allowed text-off-white font-black uppercase text-lg md:text-xl px-8 md:px-12 py-6 md:py-8 transition-colors"
-          @click="handleTrack"
-        >
-          {{ isLoading ? 'ĐANG TRA...' : 'TRACK' }}
-        </Button>
-      </div>
-
-      <!-- Phone Input (Always visible if J&T selected, or expandable for others) -->
-      <div v-if="needsPhone()" class="flex flex-col gap-2">
-        <label
-          class="text-sm font-semibold text-yellow-400 uppercase tracking-wide flex items-center gap-2"
-        >
-          <span>⚠️</span>
-          <span>Số điện thoại (Bắt buộc cho J&T Express)</span>
-        </label>
-        <Input
-          v-model="cellphone"
-          placeholder="4 số cuối SĐT người nhận"
-          maxlength="4"
-          class="bg-off-white/10 text-off-white text-center text-base py-4 px-4 border border-yellow-400/50 focus:ring-yellow-400 focus:ring-2"
-          :disabled="isLoading"
-        />
-      </div>
-
-      <!-- Optional Cellphone Input for other carriers -->
-      <div v-else class="text-center">
-        <details class="inline-block text-left">
-          <summary
-            class="text-sm text-off-white/60 cursor-pointer hover:text-off-white transition-colors"
-          >
-            Cần nhập số điện thoại? (Click để mở rộng)
-          </summary>
-          <div class="mt-4">
-            <Input
-              v-model="cellphone"
-              placeholder="4 số cuối SĐT người nhận"
-              maxlength="4"
-              class="bg-off-white/10 text-off-white text-center text-sm py-3 px-4 border border-off-white/20 focus:ring-accent-red focus:ring-2"
-              :disabled="isLoading"
-            />
-            <p class="text-xs text-off-white/40 mt-2">
-              * Một số đơn vị vận chuyển có thể yêu cầu số điện thoại
-            </p>
+      <!-- Main Tracking Card -->
+      <div class="card-elevated p-6 md:p-8 mb-6">
+        <div class="space-y-6">
+          <!-- Carrier Selection -->
+          <div>
+            <label class="block text-sm font-semibold mb-3" style="color: var(--color-text-primary)">
+              Select Carrier
+            </label>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <button
+                v-for="carrier in carriers"
+                :key="carrier.value"
+                :class="['carrier-option', { 'carrier-option-active': selectedCarrier === carrier.value }]"
+                :disabled="isLoading"
+                @click="selectedCarrier = carrier.value"
+              >
+                <span class="text-2xl mb-1">{{ carrier.icon }}</span>
+                <span class="text-xs font-medium">{{ carrier.label.split(' - ')[0] }}</span>
+              </button>
+            </div>
           </div>
-        </details>
+
+          <!-- Tracking Code Input -->
+          <div>
+            <label class="block text-sm font-semibold mb-3" style="color: var(--color-text-primary)">
+              Tracking Number
+            </label>
+            <div class="flex flex-col md:flex-row gap-3">
+              <Input
+                v-model="trackingCode"
+                placeholder="Enter your tracking code"
+                class="flex-1 input-modern text-lg font-semibold tracking-wide uppercase"
+                :disabled="isLoading"
+                @input="handleInput"
+                @keypress="handleKeyPress"
+              />
+              <Button
+                :disabled="!trackingCode.trim() || isLoading"
+                class="btn-primary px-8 py-3 text-base font-semibold whitespace-nowrap"
+                @click="handleTrack"
+              >
+                {{ isLoading ? 'Tracking...' : 'Track Package' }}
+              </Button>
+            </div>
+          </div>
+
+          <!-- Phone Input (Conditional) -->
+          <div v-if="needsPhone()" class="warning-box">
+            <div class="flex items-start gap-3">
+              <span class="text-xl flex-shrink-0">⚠️</span>
+              <div class="flex-1">
+                <p class="font-semibold mb-2" style="color: var(--color-warning)">
+                  Phone Number Required
+                </p>
+                <Input
+                  v-model="cellphone"
+                  placeholder="Last 4 digits of receiver's phone"
+                  maxlength="4"
+                  class="input-modern"
+                  :disabled="isLoading"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional Phone (Expandable) -->
+          <details v-else class="text-center">
+            <summary class="text-sm font-medium cursor-pointer inline-block" style="color: var(--color-text-secondary)">
+              Need to enter phone number?
+            </summary>
+            <div class="mt-4 max-w-md mx-auto">
+              <Input
+                v-model="cellphone"
+                placeholder="Last 4 digits (optional)"
+                maxlength="4"
+                class="input-modern text-center"
+                :disabled="isLoading"
+              />
+              <p class="text-xs mt-2" style="color: var(--color-text-muted)">
+                Some carriers may require phone verification
+              </p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="info-card">
+          <div class="text-3xl mb-3">🚀</div>
+          <h3 class="font-semibold mb-1" style="color: var(--color-text-primary)">Real-Time</h3>
+          <p class="text-sm" style="color: var(--color-text-secondary)">Get instant tracking updates</p>
+        </div>
+        <div class="info-card">
+          <div class="text-3xl mb-3">🔒</div>
+          <h3 class="font-semibold mb-1" style="color: var(--color-text-primary)">Secure</h3>
+          <p class="text-sm" style="color: var(--color-text-secondary)">Your data is protected</p>
+        </div>
+        <div class="info-card">
+          <div class="text-3xl mb-3">📱</div>
+          <h3 class="font-semibold mb-1" style="color: var(--color-text-primary)">Multi-Carrier</h3>
+          <p class="text-sm" style="color: var(--color-text-secondary)">Support all major carriers</p>
+        </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.carrier-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: var(--color-secondary-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-height: 100px;
+}
+
+.carrier-option:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.carrier-option-active {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.carrier-option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.warning-box {
+  background-color: #fef3c7;
+  border: 2px solid #fbbf24;
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+.info-card {
+  background-color: var(--color-secondary-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.info-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+</style>

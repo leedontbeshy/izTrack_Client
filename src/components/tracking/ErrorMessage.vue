@@ -7,41 +7,36 @@ defineProps<Props>();
 </script>
 
 <template>
-  <div class="bg-red-500/10 border-2 border-red-500 rounded-lg p-6 md:p-8 mt-8 animate-shake">
-    <div class="flex items-start gap-4">
-      <span class="text-3xl md:text-4xl shrink-0">⚠️</span>
-      <div class="flex-1">
-        <p class="text-lg md:text-xl font-black text-red-500 uppercase">Lỗi</p>
-        <p class="text-base md:text-lg text-off-white mt-2">
-          {{ message }}
-        </p>
+  <div class="max-w-2xl mx-auto mt-8">
+    <div class="error-card">
+      <div class="flex items-start gap-4">
+        <div class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style="background-color: #fee2e2">
+          <svg class="w-6 h-6" style="color: var(--color-error)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 class="text-lg font-bold mb-2" style="color: var(--color-error)">
+            Unable to Track Package
+          </h3>
+          <p class="text-base" style="color: var(--color-text-secondary)">
+            {{ message }}
+          </p>
+          <p class="text-sm mt-3" style="color: var(--color-text-muted)">
+            Please check your tracking number and try again.
+          </p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
-    transform: translateX(-10px);
-  }
-  20%,
-  40%,
-  60%,
-  80% {
-    transform: translateX(10px);
-  }
-}
-
-.animate-shake {
-  animation: shake 0.5s ease-in-out;
+.error-card {
+  background-color: var(--color-secondary-bg);
+  border: 2px solid var(--color-error);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
 }
 </style>

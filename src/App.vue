@@ -54,7 +54,7 @@ const handleDonateClick = () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-dark-bg">
+  <div class="min-h-screen flex flex-col" style="background-color: var(--color-primary-bg)">
     <!-- Auth View (full screen overlay) -->
     <AuthView
       v-if="showAuthView && !isAuthenticated"
@@ -97,9 +97,18 @@ const handleDonateClick = () => {
         </div>
       </main>
 
-      <!-- Footer (optional) -->
-      <footer class="border-t border-dark-card py-6 text-center">
-        <p class="text-sm text-off-white/40">© 2025 izTrack - Vietnam Shipping Tracker</p>
+      <!-- Footer -->
+      <footer class="border-t py-8 mt-16" style="border-color: var(--color-border); background-color: var(--color-secondary-bg)">
+        <div class="section-container">
+          <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p class="text-sm" style="color: var(--color-text-muted)">© 2025 izTrack - Vietnam Shipping Tracker</p>
+            <div class="flex gap-6">
+              <a href="#" class="text-sm font-medium transition-colors" style="color: var(--color-text-secondary)" @mouseover="$event.target.style.color = 'var(--color-accent)'" @mouseout="$event.target.style.color = 'var(--color-text-secondary)'">Privacy</a>
+              <a href="#" class="text-sm font-medium transition-colors" style="color: var(--color-text-secondary)" @mouseover="$event.target.style.color = 'var(--color-accent)'" @mouseout="$event.target.style.color = 'var(--color-text-secondary)'">Terms</a>
+              <a href="#" class="text-sm font-medium transition-colors" style="color: var(--color-text-secondary)" @mouseover="$event.target.style.color = 'var(--color-accent)'" @mouseout="$event.target.style.color = 'var(--color-text-secondary)'">Support</a>
+            </div>
+          </div>
+        </div>
       </footer>
     </template>
   </div>

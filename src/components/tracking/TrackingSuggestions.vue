@@ -11,95 +11,151 @@ interface Props {
 
 defineProps<Props>();
 
-const carrierLabels: Record<string, string> = {
-  GHN: '🚚 GHN - Giao Hàng Nhanh',
-  SPX: '📦 SPX - Shopee Express',
-  LEX: '✈️ LEX - LEX Vietnam',
-  JT_EXPRESS: '🎯 J&T Express',
-  GHTK: '💼 GHTK - Giao Hàng Tiết Kiệm',
-  BEST_EXPRESS: '⚡ Best Express',
+const carrierLabels: Record<string, { name: string; icon: string }> = {
+  GHN: { name: 'GHN - Giao Hang Nhanh', icon: '🚚' },
+  SPX: { name: 'SPX - Shopee Express', icon: '📦' },
+  LEX: { name: 'LEX - LEX Vietnam', icon: '✈️' },
+  JT_EXPRESS: { name: 'J&T Express', icon: '🎯' },
+  GHTK: { name: 'GHTK - Giao Hang Tiet Kiem', icon: '💼' },
+  BEST_EXPRESS: { name: 'Best Express', icon: '⚡' },
 };
 
-const getCarrierLabel = (carrier: string) => {
-  return carrierLabels[carrier] || carrier;
+const getCarrierInfo = (carrier: string) => {
+  return carrierLabels[carrier] || { name: carrier, icon: '📦' };
 };
 </script>
 
 <template>
-  <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-6 space-y-4">
-    <!-- Title -->
-    <div class="flex items-start gap-3">
-      <span class="text-2xl">💡</span>
-      <div>
-        <h3 class="text-lg font-bold text-yellow-400">Không tìm thấy thông tin tracking</h3>
-        <p class="text-sm text-off-white/70 mt-1">
-          Hệ thống không thể tự động xác định đơn vị vận chuyển
-        </p>
+  <div class="max-w-3xl mx-auto mt-8">
+    <div class="suggestion-card">
+      <div class="flex items-start gap-4 mb-6">
+        <div class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style="background-color: #fef3c7">
+          <span class="text-2xl">💡</span>
+        </div>
+        <div class="flex-1">
+          <h3 class="text-lg font-bold mb-2" style="color: var(--color-text-primary)">
+            Manual Carrier Selection Required
+          </h3>
+          <p class="text-base" style="color: var(--color-text-secondary)">
+            We couldn't automatically detect your carrier. Please select one manually.
+          </p>
+        </div>
       </div>
-    </div>
 
-    <!-- Phone requirement warning -->
-    <div v-if="requiresPhone" class="bg-yellow-500/20 border border-yellow-500/40 rounded-md p-4">
-      <div class="flex items-center gap-2 text-yellow-300">
-        <span class="text-xl">⚠️</span>
-        <span class="font-semibold">Cần nhập số điện thoại</span>
-      </div>
-      <p class="text-sm text-off-white/80 mt-2">
-        Một số đơn vị vận chuyển yêu cầu số điện thoại để tra cứu. Vui lòng nhập 4 số cuối SĐT người
-        nhận.
-      </p>
-    </div>
-
-    <!-- External URL option -->
-    <div v-if="externalUrl" class="bg-blue-500/10 border border-blue-500/30 rounded-md p-4">
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-xl">ℹ️</span>
-        <p class="text-sm font-semibold text-blue-300">Đơn vị vận chuyển chưa được hỗ trợ</p>
-      </div>
-      <p class="text-sm text-off-white/80 mb-3">
-        Tính năng tra cứu đơn vị này sẽ được cập nhật trong thời gian tới. Bạn sẽ được chuyển đến
-        trang tra cứu chính thức trong giây lát...
-      </p>
-      <button
-        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-        @click="onOpenExternal"
-      >
-        <span>🔗</span>
-        <span>Mở trang tra cứu ngay</span>
-        <span>↗️</span>
-      </button>
-    </div>
-
-    <!-- Suggested carriers -->
-    <div v-if="suggestedCarriers.length > 0">
-      <p class="text-sm font-semibold text-off-white/90 mb-3">
-        Vui lòng chọn đơn vị vận chuyển thủ công:
-      </p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <button
-          v-for="carrier in suggestedCarriers"
-          :key="carrier"
-          class="bg-off-white/10 hover:bg-off-white/20 border border-off-white/20 hover:border-accent-red/50 rounded-lg p-4 transition-all text-left group"
-          @click="onRetryWithCarrier(carrier)"
-        >
-          <div class="flex items-center justify-between">
-            <span
-              class="text-base font-medium text-off-white group-hover:text-accent-red transition-colors"
-            >
-              {{ getCarrierLabel(carrier) }}
-            </span>
-            <span class="text-off-white/50 group-hover:text-accent-red transition-colors">→</span>
+      <div v-if="requiresPhone" class="warning-banner mb-6">
+        <div class="flex items-center gap-3">
+          <span class="text-xl">⚠️</span>
+          <div>
+            <p class="font-semibold" style="color: var(--color-warning)">Phone Number Required</p>
+            <p class="text-sm mt-1" style="color: var(--color-text-secondary)">
+              Please enter the last 4 digits of the receiver's phone number
+            </p>
           </div>
-        </button>
+        </div>
       </div>
-    </div>
 
-    <!-- General guidance -->
-    <div class="text-xs text-off-white/50 pt-2 border-t border-off-white/10">
-      <p>
-        💡 Mẹo: Kiểm tra lại mã vận đơn hoặc chọn đúng đơn vị vận chuyển phía trên để tra cứu chính
-        xác hơn.
-      </p>
+      <div v-if="externalUrl" class="info-banner mb-6">
+        <div class="flex items-start gap-3">
+          <span class="text-xl flex-shrink-0">ℹ️</span>
+          <div class="flex-1">
+            <p class="font-semibold mb-2" style="color: var(--color-info)">External Tracking Available</p>
+            <p class="text-sm mb-3" style="color: var(--color-text-secondary)">
+              This carrier requires tracking on their official website
+            </p>
+            <button
+              class="external-btn"
+              @click="onOpenExternal"
+            >
+              Open Official Tracking Page
+              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="suggestedCarriers.length > 0">
+        <h4 class="text-sm font-semibold mb-4" style="color: var(--color-text-primary)">
+          Select Your Carrier
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            v-for="carrier in suggestedCarriers"
+            :key="carrier"
+            class="carrier-suggestion-btn"
+            @click="onRetryWithCarrier(carrier)"
+          >
+            <span class="text-2xl mr-3">{{ getCarrierInfo(carrier).icon }}</span>
+            <span class="font-medium">{{ getCarrierInfo(carrier).name }}</span>
+            <svg class="w-5 h-5 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.suggestion-card {
+  background-color: var(--color-secondary-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+.warning-banner {
+  background-color: #fef3c7;
+  border: 2px solid #fbbf24;
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+.info-banner {
+  background-color: #e0f2fe;
+  border: 2px solid #0ea5e9;
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+.carrier-suggestion-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--color-secondary-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  color: var(--color-text-primary);
+  font-size: 0.9375rem;
+}
+
+.carrier-suggestion-btn:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.external-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.625rem 1.25rem;
+  background-color: var(--color-info);
+  color: white;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.external-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+</style>

@@ -1,23 +1,22 @@
 <script setup lang="ts">
-// LoadingSpinner - Animated loading indicator
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center py-12 md:py-16">
-    <!-- Spinner -->
-    <div class="relative w-16 h-16 md:w-20 md:h-20">
-      <div class="absolute inset-0 border-4 border-off-white/20 rounded-full"></div>
+  <div class="flex flex-col items-center justify-center py-16">
+    <div class="relative w-20 h-20 mb-6">
+      <div class="absolute inset-0 rounded-full" style="border: 4px solid var(--color-border)"></div>
       <div
-        class="absolute inset-0 border-4 border-accent-red rounded-full border-t-transparent animate-spin"
+        class="absolute inset-0 rounded-full animate-spin"
+        style="border: 4px solid var(--color-accent); border-top-color: transparent"
       ></div>
     </div>
 
-    <!-- Loading Text -->
-    <p class="mt-6 text-lg md:text-xl font-bold uppercase text-off-white animate-pulse">
-      Đang tra cứu...
+    <h3 class="text-xl font-bold mb-2" style="color: var(--color-text-primary)">
+      Tracking Your Package
+    </h3>
+    <p class="text-sm" style="color: var(--color-text-secondary)">
+      Please wait while we fetch the latest information
     </p>
-
-    <p class="mt-2 text-sm text-off-white/60">Vui lòng đợi trong giây lát</p>
   </div>
 </template>
 
@@ -30,19 +29,5 @@
 
 .animate-spin {
   animation: spin 1s linear infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 </style>
